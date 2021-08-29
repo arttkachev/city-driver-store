@@ -1,5 +1,6 @@
 *.vs
 *Backend/node_modules
+*Content/VehicleCPP/Maps/VehicleExampleMap_BuiltData.uasset
 *Binaries
 *DerivedDataCache
 *Intermediate
