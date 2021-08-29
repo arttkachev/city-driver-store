@@ -1,0 +1,18 @@
+{
+  "name": "city-driver-garage",
+  "version": "1.0.0",
+  "description": "City Driver Backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "Artem Tkachev",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "esm": "^3.2.25",
+    "express": "^4.17.1",
+    "mongoose": "^6.0.2"
+  }
+}
