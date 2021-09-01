@@ -1,3 +1,4 @@
+import CarController from './controllers/carController';
 import DBContext from "./db/dbconfig";
 const express = require("express"); // grab express library. require('express') is something like import library
 require('dotenv/config'); // grab library that allows to read public vars from .env file
@@ -11,8 +12,7 @@ server.use(express.urlencoded({ extended: true }));
 server.use(express.json());
 
 // routers
-const carsRouter = require('./routers/carsRouter'); // import carsRouer
-server.use('/cars', carsRouter); // use carsRouter as middleware. Args (path for a router, where router comes from)
+server.use('/cars', new CarController().router)
 
 // connect to db
 DBContext.connect();
