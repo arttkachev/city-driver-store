@@ -1,16 +1,23 @@
-import express from "express"; // grab express library. require('express') is something like import library
 import DBContext from "./db/dbconfig";
-
+const express = require("express"); // grab express library. require('express') is something like import library
 require('dotenv/config'); // grab library that allows to read public vars from .env file
 
 // create server
 let server = express();
 const port = 3000;
 
+// middleware
+server.use(express.urlencoded({ extended: true }));
+server.use(express.json());
+
+// routers
+const carsRouter = require('./routers/carsRouter'); // import carsRouer
+server.use('/cars', carsRouter); // use carsRouter as middleware. Args (path for a router, where router comes from)
+
 // connect to db
 DBContext.connect();
 
-// routes
+// check request
 server.get('/', (req, res, next) => {
 	res.send('City Driver Backend');
 })
