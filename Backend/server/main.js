@@ -12,7 +12,7 @@ server.use(express.urlencoded({ extended: true }));
 server.use(express.json());
 
 // routers
-server.use('/cars', new CarController().router)
+server.use('/garage/cars', new CarController().router)
 
 // connect to db
 DBContext.connect();
