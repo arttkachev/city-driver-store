@@ -1,16 +1,16 @@
 // controller handles requests/responds
 
 import express from 'express';
-import CarService from "../services/carService";
+import CarService from "../services/CarService";
 
-// expose our model and functionality to talk to db through ApparelService
+// expose our model and functionality to talk to db through CarService
 let _carService = new CarService().repository;
 
 export default class CarController {
 	constructor() {
 		this.router = express.Router()
 			.get('', this.getAllCars)
-			.get('/:id', this.getCarById)
+			.get('/:id/car', this.getCarById)
 			.post('', this.addCar)
 			.put('/:id', this.editCar)
 			.delete('/:id', this.deleteCar)
@@ -18,7 +18,7 @@ export default class CarController {
 
 	async getAllCars(req, res, next) {
 		try {
-			let car = await _carService.find({});
+			let car = await _carService.find({}).populate("tags");
 			return res.send(car);
 		}
 		catch (error) {
@@ -48,7 +48,7 @@ export default class CarController {
 
 	async editCar(req, res, next) {
 		try {
-			let editedCar = await _carService.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true }); // args" (id of the apparel to edit, what to edit, return edited one or old)
+			let editedCar = await _carService.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true }); // args" (id of the car to edit, what to edit, return edited one or old)
 			return res.send(editedCar);
 		}
 		catch (error) {
@@ -58,7 +58,7 @@ export default class CarController {
 
 	async deleteCar(req, res, next) {
 		try {
-			let deletedCar = await _carService.findOneAndDelete({ _id: req.params.id }); // args" (id of the apparel to delete (in our case by id))
+			let deletedCar = await _carService.findOneAndDelete({ _id: req.params.id }); // args" (id of the car to delete (in our case by id))
 			return res.send("Deleted");
 		}
 		catch (error) {
