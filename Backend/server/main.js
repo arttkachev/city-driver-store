@@ -8,10 +8,17 @@ import TagController from './controllers/TagController';
 import DBContext from "./db/DBconfig";
 const express = require("express"); // grab express library. require('express') is something like import library
 require('dotenv/config'); // grab library that allows to read public vars from .env file
+const cors = require('cors');
+
+
 
 // create server
 let server = express();
 const port = 3000;
+
+// use cors
+server.use(cors());
+server.options('*', cors()); // args (asteriks means cors is enabled for the entire server)
 
 // middleware
 server.use(express.urlencoded({ extended: true }));
