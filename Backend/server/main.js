@@ -6,6 +6,7 @@ import AmbulanceController from './controllers/AmbulanceController';
 import FireEngineController from './controllers/FireEngineController';
 import TagController from './controllers/TagController';
 import UserController from './controllers/UserController';
+import CategoryController from './controllers/CategoryController';
 import DBContext from "./db/DBconfig";
 const express = require("express"); // grab express library. require('express') is something like import library
 require('dotenv/config'); // grab library that allows to read public vars from .env file
@@ -33,6 +34,7 @@ server.use('/garage/trucks', new TruckController().router);
 server.use('/garage/ambulance', new AmbulanceController().router);
 server.use('/garage/fire-engines', new FireEngineController().router);
 server.use('/garage/tags', new TagController().router);
+server.use('/garage/categories', new CategoryController().router);
 server.use('/users', new UserController().router);
 
 // connect to db
