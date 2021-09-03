@@ -4,7 +4,17 @@ const Schema = mongoose.Schema // Schema defines how the object looks like in th
 
 // define a car model
 const categorySchema = new Schema({
-
+	name: {
+		type: String,
+		required: true
+	},
+	description: {
+		type: String,
+		default: ''
+	},
+	icon: {
+		type: String
+	}
 });
 
 // export outside
