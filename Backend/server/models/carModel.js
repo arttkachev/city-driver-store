@@ -7,15 +7,38 @@ const ObjectId = Schema.Types.ObjectId // ObjectId references to the object id i
 
 // define a car model
 const carSchema = new Schema({
-	name: String,
-	category: String,
-	description: String,
-	capacity: Number,
-	icon: String,
-	year: String,
-	color: String,
-	price: Number,
-	tags: [{ type: ObjectId, ref: "tag" }]
+	name: {
+		type: String,
+		required: true
+	},
+	category: {
+		type: ObjectId,
+		ref: 'category',
+		required: true
+	},
+	description: {
+		type: String
+	},
+	capacity: {
+		type: Number
+	},
+	icon: {
+		type: String,
+		default: ''
+	},
+	year: {
+		type: String
+	},
+	color: {
+		type: String
+	},
+	price: {
+		type: Number,
+		required: true
+	},
+	tags: {
+		type: [{ type: ObjectId, ref: "tag" }]
+	}
 });
 
 // export outside
