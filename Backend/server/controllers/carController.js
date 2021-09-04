@@ -2,6 +2,7 @@
 
 import express from 'express';
 import CarService from "../services/CarService";
+const mongoose = require('mongoose');
 
 // expose our model and functionality to talk to db through CarService
 let _carService = new CarService().repository;
@@ -10,7 +11,7 @@ export default class CarController {
 	constructor() {
 		this.router = express.Router()
 			.get('', this.getAllCars)
-			.get('/:id/car', this.getCarById)
+			.get('/:id', this.getCarById)
 			.post('', this.addCar)
 			.put('/:id', this.editCar)
 			.delete('/:id', this.deleteCar)
@@ -30,8 +31,14 @@ export default class CarController {
 
 	async getCarById(req, res, next) {
 		try {
-			let carById = await _carService.findById(req.params.id);
-			return res.send(carById);
+			if (mongoose.isValidObjectId(req.params.id)) {
+				let carById = await _carService.findById(req.params.id);
+				return res.send(carById);
+			}
+			else {
+				res.status(400).send('Invalid Object Id');
+			}
+
 		}
 		catch (error) {
 			next(error);
