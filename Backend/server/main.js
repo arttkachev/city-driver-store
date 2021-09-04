@@ -27,14 +27,14 @@ server.use(express.urlencoded({ extended: true }));
 server.use(express.json());
 
 // routers
-server.use('/garage/cars', new CarController().router);
-server.use('/garage/buses', new BusController().router);
-server.use('/garage/taxi', new TaxiController().router);
-server.use('/garage/trucks', new TruckController().router);
-server.use('/garage/ambulance', new AmbulanceController().router);
-server.use('/garage/fire-engines', new FireEngineController().router);
-server.use('/garage/tags', new TagController().router);
-server.use('/garage/categories', new CategoryController().router);
+server.use('/cars', new CarController().router);
+server.use('/cars/buses', new BusController().router);
+server.use('/cars/taxi', new TaxiController().router);
+server.use('/cars/trucks', new TruckController().router);
+server.use('/cars/ambulance', new AmbulanceController().router);
+server.use('/cars/fire-engines', new FireEngineController().router);
+server.use('/tags', new TagController().router);
+server.use('/categories', new CategoryController().router);
 server.use('/users', new UserController().router);
 
 // connect to db

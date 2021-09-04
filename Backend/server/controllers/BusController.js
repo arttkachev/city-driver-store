@@ -2,9 +2,11 @@
 
 import express from 'express';
 import CarService from "../services/CarService";
+import CategoryService from '../services/CategoryService';
 
 // expose our model and functionality to talk to db through CarService
 let _carService = new CarService().repository;
+let _categoryService = new CategoryService().repository;
 
 export default class BusController {
 	constructor() {
@@ -15,8 +17,10 @@ export default class BusController {
 	async getAllBuses(req, res, next) {
 		try {
 			let buses = await _carService.find({
-				category: 'Bus'
-			}).populate('tags');
+				category: '6133863e4ec7d025ad73f9f6' // bus object id
+			})
+				.populate('tags')
+				.populate('category');
 			return res.send(buses);
 		}
 		catch (error) {

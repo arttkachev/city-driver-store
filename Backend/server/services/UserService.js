@@ -9,6 +9,6 @@ const _model = userSchema;
 // expose the repository. We use the repository to contact with db and have an access to a db through the repository
 export default class UserService {
 	get repository() {
-		return mongoose.model("user", _model) // this makes available all methods from mongo db (CRUD operations) // args (name of the model, model definition)
+		return mongoose.model('user', _model, 'users') // this makes available all methods from mongo db (CRUD operations) // args (name of the model, model definition)
 	}
 }

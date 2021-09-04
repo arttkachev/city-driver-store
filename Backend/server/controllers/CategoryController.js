@@ -3,14 +3,14 @@
 import express from 'express';
 import CategoryService from "../services/CategoryService";
 
-// expose our model and functionality to talk to db through CategoryService
+// expose our model and functionality to talk to db through GarageService
 let _categoryService = new CategoryService().repository;
 
 export default class CategoryController {
 	constructor() {
 		this.router = express.Router()
 			.get('', this.getAllCategories)
-			.get('/:id/category', this.getCategoryById)
+			.get('/:id', this.getCategoryById)
 			.post('', this.addCategory)
 			.put('/:id', this.editCategory)
 			.delete('/:id', this.deleteCategory)

@@ -13,8 +13,10 @@ export default class TruckController {
 	async getAllTrucks(req, res, next) {
 		try {
 			let trucks = await _carService.find({
-				category: 'Truck'
-			}).populate('tags');
+				category: '6133867d4ec7d025ad73f9fa' // trucks object id
+			})
+				.populate('tags')
+				.populate('category');
 			return res.send(trucks);
 		}
 		catch (error) {

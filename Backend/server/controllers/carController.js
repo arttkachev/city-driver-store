@@ -15,10 +15,12 @@ export default class CarController {
 			.put('/:id', this.editCar)
 			.delete('/:id', this.deleteCar)
 	}
-
+	// _carService.find({}).select(<fields you are interested>) - _carService.find({}).select(name icon -_id) = will show name field and icon field and exclude _id (in args it is minus_id)
 	async getAllCars(req, res, next) {
 		try {
-			let car = await _carService.find({}).populate("tags");
+			let car = await _carService.find({})
+				.populate('tags')
+				.populate('category')
 			return res.send(car);
 		}
 		catch (error) {
