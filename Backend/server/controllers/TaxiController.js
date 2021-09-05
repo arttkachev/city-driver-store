@@ -14,7 +14,9 @@ export default class TaxiController {
 		try {
 			let taxi = await _carService.find({
 				category: '613386564ec7d025ad73f9f8'
-			}).populate('tags');
+			})
+				.populate('tags')
+				.populate('category');
 			return res.send(taxi);
 		}
 		catch (error) {
