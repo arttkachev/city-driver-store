@@ -28,11 +28,11 @@ server.use(express.json());
 
 // routers
 server.use('/cars', new CarController().router);
-server.use('/cars/buses', new BusController().router);
-server.use('/cars/taxi', new TaxiController().router);
-server.use('/cars/trucks', new TruckController().router);
-server.use('/cars/ambulance', new AmbulanceController().router);
-server.use('/cars/fire-engines', new FireEngineController().router);
+server.use('/buses', new BusController().router);
+server.use('/taxi', new TaxiController().router);
+server.use('/trucks', new TruckController().router);
+server.use('/ambulance', new AmbulanceController().router);
+server.use('/fire-engines', new FireEngineController().router);
 server.use('/tags', new TagController().router);
 server.use('/categories', new CategoryController().router);
 server.use('/users', new UserController().router);

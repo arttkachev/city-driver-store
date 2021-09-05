@@ -12,6 +12,7 @@ export default class CarController {
 		this.router = express.Router()
 			.get('', this.getAllCars)
 			.get('/:id', this.getCarById)
+			.get('/get/count', this.getCarsCount)
 			.post('', this.addCar)
 			.put('/:id', this.editCar)
 			.delete('/:id', this.deleteCar)
@@ -39,6 +40,20 @@ export default class CarController {
 				res.status(400).send('Invalid Object Id');
 			}
 
+		}
+		catch (error) {
+			next(error);
+		}
+	}
+
+	async getCarsCount(req, res, next) {
+		try {
+			const carCount = await _carService.countDocuments({});// returns a number of cars in db
+
+			if (!carCount) {
+				res.status(500).json({ success: false })
+			}
+			res.send({ Count: carCount });
 		}
 		catch (error) {
 			next(error);

@@ -2,11 +2,9 @@
 
 import express from 'express';
 import CarService from "../services/CarService";
-import CategoryService from '../services/CategoryService';
 
 // expose our model and functionality to talk to db through CarService
 let _carService = new CarService().repository;
-let _categoryService = new CategoryService().repository;
 
 export default class BusController {
 	constructor() {

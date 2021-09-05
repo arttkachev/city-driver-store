@@ -13,7 +13,7 @@ export default class TaxiController {
 	async getAllTaxi(req, res, next) {
 		try {
 			let taxi = await _carService.find({
-				category: 'Taxi'
+				category: '613386564ec7d025ad73f9f8'
 			}).populate('tags');
 			return res.send(taxi);
 		}
