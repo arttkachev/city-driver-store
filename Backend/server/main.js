@@ -1,9 +1,4 @@
 import CarController from './controllers/CarController';
-import TaxiController from './controllers/TaxiController';
-import TruckController from './controllers/TruckController';
-import BusController from './controllers/BusController';
-import AmbulanceController from './controllers/AmbulanceController';
-import FireEngineController from './controllers/FireEngineController';
 import TagController from './controllers/TagController';
 import UserController from './controllers/UserController';
 import CategoryController from './controllers/CategoryController';
@@ -28,11 +23,6 @@ server.use(express.json());
 
 // routers
 server.use('/cars', new CarController().router);
-server.use('/buses', new BusController().router);
-server.use('/taxi', new TaxiController().router);
-server.use('/trucks', new TruckController().router);
-server.use('/ambulance', new AmbulanceController().router);
-server.use('/fire-engines', new FireEngineController().router);
 server.use('/tags', new TagController().router);
 server.use('/categories', new CategoryController().router);
 server.use('/users', new UserController().router);

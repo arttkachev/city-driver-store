@@ -36,10 +36,9 @@ const carSchema = new Schema({
 		type: Number,
 		required: true
 	},
-	tags: {
-		type: [{ type: ObjectId, ref: "tag" }]
-	}
-});
+	tags: [String]
+}
+);
 
 // export outside
 module.exports = carSchema;

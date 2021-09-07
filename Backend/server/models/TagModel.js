@@ -4,7 +4,9 @@ const Schema = mongoose.Schema // Schema defines how the object looks like in th
 
 // define a car model
 const tagSchema = new Schema({
-	isOwned: { type: Boolean, required: true }
+	tags: [{
+		type: String
+	}]
 });
 
 // export outside

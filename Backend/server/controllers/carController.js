@@ -13,6 +13,10 @@ export default class CarController {
 			.get('', this.getAllCars)
 			.get('/:id', this.getCarById)
 			.get('/get/count', this.getCarsCount)
+			.get('/get/featured/:count', this.getFeaturedCars)
+			.get('/get/buses', this.getBuses)
+			.get('/get/taxi', this.getTaxi)
+			.get('/get/trucks', this.getTrucks)
 			.post('', this.addCar)
 			.put('/:id', this.editCar)
 			.delete('/:id', this.deleteCar)
@@ -48,12 +52,64 @@ export default class CarController {
 
 	async getCarsCount(req, res, next) {
 		try {
-			const carCount = await _carService.countDocuments({});// returns a number of cars in db
+			let carCount = await _carService.countDocuments({});// returns a number of cars in db
 
 			if (!carCount) {
 				res.status(500).json({ success: false })
 			}
 			res.send({ Count: carCount });
+		}
+		catch (error) {
+			next(error);
+		}
+	}
+
+	async getFeaturedCars(req, res, next) {
+		try {
+			const count = req.params.count ? req.params.count : 0;
+			let featuredCars = await _carService.find({ IsFeatured: true }).limit(+count); // +count converts count to Number. Initially req.params.count returns String. .limit() limits the number of cars shown
+
+			if (!featuredCars) {
+				res.status(500).json({ success: false })
+			}
+			res.send(featuredCars);
+		}
+		catch (error) {
+			next(error);
+		}
+	}
+
+	async getBuses(req, res, next) {
+		try {
+			let buses = await _carService.find({ category: '6133863e4ec7d025ad73f9f6' })
+				.populate('tags')
+				.populate('category');
+
+			return res.send(buses);
+		}
+		catch (error) {
+			next(error);
+		}
+	}
+
+	async getTaxi(req, res, next) {
+		try {
+			let taxi = await _carService.find({ category: '613386564ec7d025ad73f9f8' })
+				.populate('tags')
+				.populate('category')
+			return res.send(taxi);
+		}
+		catch (error) {
+			next(error);
+		}
+	}
+
+	async getTrucks(req, res, next) {
+		try {
+			let trucks = await _carService.find({ category: '6133867d4ec7d025ad73f9fa' })
+				.populate('tags')
+				.populate('category')
+			return res.send(trucks);
 		}
 		catch (error) {
 			next(error);
@@ -71,13 +127,48 @@ export default class CarController {
 	}
 
 	async editCar(req, res, next) {
-		try {
-			let editedCar = await _carService.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true }); // args" (id of the car to edit, what to edit, return edited one or old)
+		if (mongoose.isValidObjectId(req.params.id)) {
+			const { id: _id } = req.params;
+			const editedCar = await _carService.findOneAndUpdate(
+				{ _id },
+				[{
+					$set: {
+						name: {
+							$cond: { if: req.body.name != null, then: req.body.name, else: '$name' }
+						},
+						category: {
+							$cond: { if: req.body.category != null, then: req.body.category, else: '$category' }
+						},
+						description: {
+							$cond: { if: req.body.description != null, then: req.body.description, else: '$description' }
+						},
+						capacity: {
+							$cond: { if: req.body.capacity != null, then: req.body.capacity, else: '$capacity' }
+						},
+						icon: {
+							$cond: { if: req.body.icon != null, then: req.body.icon, else: '$icon' }
+						},
+						year: {
+							$cond: { if: req.body.year != null, then: req.body.year, else: '$year' }
+						},
+						color: {
+							$cond: { if: req.body.color != null, then: req.body.color, else: '$color' }
+						},
+						price: {
+							$cond: { if: req.body.price != null, then: req.body.price, else: '$price' }
+						},
+						tags: {
+							$cond: [
+								{ $in: [req.body.tags, '$tags'] }, { $setDifference: ['$tags', [req.body.tags]] }, { $concatArrays: ['$tags', [req.body.tags]] }
+							]
+						}
+					}
+				}
+				], { new: true });
 			return res.send(editedCar);
 		}
-		catch (error) {
-			next(error);
-		}
+
+		return res.send({ updateResult: false, message: 'Invalid Object Id' });
 	}
 
 	async deleteCar(req, res, next) {
