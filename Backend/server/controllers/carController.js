@@ -10,7 +10,7 @@ let _carService = new CarService().repository;
 export default class CarController {
 	constructor() {
 		this.router = express.Router()
-			.get('', this.getAllCars)
+			.get('', this.getCars)
 			.get('/:id', this.getCarById)
 			.get('/get/count', this.getCarsCount)
 			.get('/get/featured/:count', this.getFeaturedCars)
@@ -22,9 +22,14 @@ export default class CarController {
 			.delete('/:id', this.deleteCar)
 	}
 	// _carService.find({}).select(<fields you are interested>) - _carService.find({}).select(name icon -_id) = will show name field and icon field and exclude _id (in args it is minus_id)
-	async getAllCars(req, res, next) {
+	async getCars(req, res, next) {
 		try {
-			let car = await _carService.find({})
+			// query format: localhost:3000/cars?categories=613386564ec7d025ad73f9f8,8876386564ec7d025ad73f9
+			let filter = {};
+			if (req.query.categories) {
+				filter = { category: req.query.categories.split(',') } // filter to show cars by specified categories
+			}
+			let car = await _carService.find(filter) // use query filter in request
 				.populate('tags')
 				.populate('category')
 			return res.send(car);

@@ -37,8 +37,17 @@ const carSchema = new Schema({
 		required: true
 	},
 	tags: [String]
-}
-);
+});
+
+// create virtual field in the model to have "id" field as addition to "_id"
+carSchema.virtual('id').get(function () {
+	return this._id.toHexString();
+})
+
+// activate virtuals
+carSchema.set('toJSON', {
+	virtuals: true,
+})
 
 // export outside
 module.exports = carSchema;
