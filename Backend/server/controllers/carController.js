@@ -122,12 +122,9 @@ export default class CarController {
 						price: {
 							$cond: { if: req.body.price != null, then: req.body.price, else: '$price' }
 						},
-						// multiple tags can be added in one call ["tag1", "tag2", ...], but deletion of tags must be done sequentially by single value "tag1" and then "tag2" in several calls
-						// because $in: aggregation checks a value in a specified array only
+
 						tags: {
-							$cond: [
-								{ $in: [req.body.tags, '$tags'] }, { $setDifference: ['$tags', [req.body.tags]] }, { $concatArrays: ['$tags', req.body.tags] }
-							]
+							$cond: [{ $in: [{ $first: [{ $ifNull: [req.body.tags, []] }] }, '$tags'] }, { $setDifference: ['$tags', req.body.tags] }, { $concatArrays: ['$tags', { $ifNull: [req.body.tags, []] }] }]
 						}
 					}
 				}
