@@ -14,9 +14,6 @@ export default class CarController {
 			.get('/:id', this.getCarById)
 			.get('/get/count', this.getCarsCount)
 			.get('/get/featured/:count', this.getFeaturedCars)
-			.get('/get/buses', this.getBuses)
-			.get('/get/taxi', this.getTaxi)
-			.get('/get/trucks', this.getTrucks)
 			.post('', this.addCar)
 			.put('/:id', this.editCar)
 			.delete('/:id', this.deleteCar)
@@ -84,43 +81,6 @@ export default class CarController {
 		}
 	}
 
-	async getBuses(req, res, next) {
-		try {
-			let buses = await _carService.find({ category: '6133863e4ec7d025ad73f9f6' })
-				.populate('tags')
-				.populate('category');
-
-			return res.send(buses);
-		}
-		catch (error) {
-			next(error);
-		}
-	}
-
-	async getTaxi(req, res, next) {
-		try {
-			let taxi = await _carService.find({ category: '613386564ec7d025ad73f9f8' })
-				.populate('tags')
-				.populate('category')
-			return res.send(taxi);
-		}
-		catch (error) {
-			next(error);
-		}
-	}
-
-	async getTrucks(req, res, next) {
-		try {
-			let trucks = await _carService.find({ category: '6133867d4ec7d025ad73f9fa' })
-				.populate('tags')
-				.populate('category')
-			return res.send(trucks);
-		}
-		catch (error) {
-			next(error);
-		}
-	}
-
 	async addCar(req, res, next) {
 		try {
 			let newCar = await _carService.create(req.body); // mongo create method and we passing in a request body as a param. As mentioned above we have an access to all functionality of the db thorugh the service (see implementation) 
@@ -162,9 +122,11 @@ export default class CarController {
 						price: {
 							$cond: { if: req.body.price != null, then: req.body.price, else: '$price' }
 						},
+						// multiple tags can be added in one call ["tag1", "tag2", ...], but deletion of tags must be done sequentially by single value "tag1" and then "tag2" in several calls
+						// because $in: aggregation checks a value in a specified array only
 						tags: {
 							$cond: [
-								{ $in: [req.body.tags, '$tags'] }, { $setDifference: ['$tags', [req.body.tags]] }, { $concatArrays: ['$tags', [req.body.tags]] }
+								{ $in: [req.body.tags, '$tags'] }, { $setDifference: ['$tags', [req.body.tags]] }, { $concatArrays: ['$tags', req.body.tags] }
 							]
 						}
 					}
