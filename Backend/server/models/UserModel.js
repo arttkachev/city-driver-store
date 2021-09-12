@@ -8,7 +8,7 @@ const ObjectId = Schema.Types.ObjectId // ObjectId references to the object id i
 const userSchema = new Schema({
 	name: { type: String, required: true },
 	email: { type: String, required: true },
-	passwordHash: { type: String, required: true },
+	password: { type: String, required: true },
 	isAdmin: { type: Number, required: true },
 	balance: { type: Number, default: 10000 },
 	purchased: [String]

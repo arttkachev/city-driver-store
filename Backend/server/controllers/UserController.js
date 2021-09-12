@@ -3,6 +3,7 @@
 import express from 'express';
 import UserService from "../services/UserService";
 const bcrypt = require('bcryptjs'); // hashing passwords
+const jwt = require('jsonwebtoken'); // user auth
 
 // expose our model and functionality to talk to db through UserService
 let _userService = new UserService().repository;
@@ -13,6 +14,7 @@ export default class UserController {
 			.get('', this.getUsers)
 			.get('/:id/user', this.getUserById)
 			.post('', this.addUser)
+			.post('/login', this.login)
 			.put('/:id', this.editUser)
 			.delete('/:id', this.deleteUser)
 	}
@@ -42,17 +44,45 @@ export default class UserController {
 			let newUser = await _userService.create({
 				name: req.body.name,
 				email: req.body.email,
-				passwordHash: bcrypt.hashSync(req.body.passwordHash), // hashing password
+				password: bcrypt.hashSync(req.body.password), // hashing password
 				isAdmin: req.body.isAdmin,
 				balance: req.body.balance,
 				purchased: req.body.purchased
-			}); // mongo create method and we passing in a request body as a param. As mentioned above we have an access to all functionality of the db thorugh the service (see implementation)
+			});
 			return res.send(newUser);
 		}
 		catch (error) {
 			next(error);
 		}
 	}
+
+	async login(req, res) {
+		// first, let's check if a user exists. Looking for the user by email
+		const user = await _userService.findOne({
+			email: req.body.email
+		});
+
+		if (user) {
+			// if password correct, create token for the user with jwt lib
+			if (bcrypt.compareSync(req.body.password, user.password)) {
+				const secret = process.env.SECRET;
+				// token is used by a client to access API
+				const token = jwt.sign(
+					{
+						userId: user.id // you can pass anything
+					},
+					secret, // secret is something like a password to create a token
+					{ expiresIn: '1d' } // optional. Token expires in 1d and the used will be logged out
+				)
+				res.status(200).send({ user: user.email, token: token });
+			}
+			else {
+				res.status(400).send('wrong password');
+			}
+		}
+		return res.status(400).send('No user with such email found');
+	}
+
 
 	async editUser(req, res, next) {
 		try {
