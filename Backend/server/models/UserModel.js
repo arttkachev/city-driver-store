@@ -6,14 +6,24 @@ const ObjectId = Schema.Types.ObjectId // ObjectId references to the object id i
 
 // define a car model
 const userSchema = new Schema({
-	name: String,
-	email: String,
-	password: String,
-	capacity: Number,
-	balance: Number,
-	cars: [{ type: ObjectId, ref: "car" }]
+	name: { type: String, required: true },
+	email: { type: String, required: true },
+	passwordHash: { type: String, required: true },
+	isAdmin: { type: Number, required: true },
+	balance: { type: Number, default: 10000 },
+	purchased: [String]
 
 });
+
+// create virtual "id" field (more fronend friendly)
+userSchema.virtual('id').get(function () {
+	return this._id.toHexString();
+})
+
+// activate virtuals
+userSchema.set('toJSON', {
+	virtuals: true,
+})
 
 // export outside
 module.exports = userSchema;

@@ -39,7 +39,7 @@ const carSchema = new Schema({
 	tags: [String]
 });
 
-// create virtual field in the model to have "id" field as addition to "_id"
+// create virtual "id" field (more fronend friendly)
 carSchema.virtual('id').get(function () {
 	return this._id.toHexString();
 })
