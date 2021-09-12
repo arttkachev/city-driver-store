@@ -74,10 +74,10 @@ export default class UserController {
 					secret, // secret is something like a password to create a token
 					{ expiresIn: '1d' } // optional. Token expires in 1d and the used will be logged out
 				)
-				res.status(200).send({ user: user.email, token: token });
+				return res.status(200).send({ user: user.email, token: token });
 			}
 			else {
-				res.status(400).send('wrong password');
+				return res.status(400).send('wrong password');
 			}
 		}
 		return res.status(400).send('No user with such email found');
