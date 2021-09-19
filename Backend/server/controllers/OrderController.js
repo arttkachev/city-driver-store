@@ -100,16 +100,19 @@ export default class OrderController {
 	}
 
 	async deleteOrder(req, res, next) {
-		// for practice purposes handle deletion by another way
-		let deletedOrder = _orderService.findOneAndDelete({ _id: req.params.id }).then(order => {
+		// first, remove order
+		let deletedOrder = _orderService.findOneAndDelete({ _id: req.params.id }).then(async order => { // then loop through all order items in order
 			if (order) {
+				await order.orderItems.map(async orderItem => {
+					await _orderItemService.findByIdAndRemove(orderItem) // and remove it
+				})
 				return res.send("Deleted");
 			}
 			else {
 				return res.status(400).json({ success: false, message: 'Failed to delete order' });
 			}
 		}).catch(err => {
-			return res.status(400).json({ success: false, error: err });
+			return res.status(500).json({ success: false, error: err });
 		})
 	}
 }
