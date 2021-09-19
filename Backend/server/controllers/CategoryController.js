@@ -3,7 +3,7 @@
 import express from 'express';
 import CategoryService from "../services/CategoryService";
 
-// expose our model and functionality to talk to db through GarageService
+// expose our model and functionality to talk to db
 let _categoryService = new CategoryService().repository;
 
 export default class CategoryController {

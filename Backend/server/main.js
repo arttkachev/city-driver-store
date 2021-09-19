@@ -2,10 +2,13 @@ import CarController from './controllers/CarController';
 import TagController from './controllers/TagController';
 import UserController from './controllers/UserController';
 import CategoryController from './controllers/CategoryController';
+import OrderController from './controllers/OrderController';
 import DBContext from "./db/DBconfig";
 const express = require("express"); // grab express library. require('express') is something like import library
 require('dotenv/config'); // grab library that allows to read public vars from .env file
 const cors = require('cors');
+const authJwt = require('./helpers/jwt');
+const errorHandler = require('./helpers/ErrorHandler');
 
 
 
@@ -20,12 +23,15 @@ server.options('*', cors()); // args (asteriks means cors is enabled for the ent
 // middleware
 server.use(express.urlencoded({ extended: true }));
 server.use(express.json());
+server.use(authJwt()); // middleware used to secure server's API. Request is only valid if a user authorized
+server.use(errorHandler);
 
 // routers
 server.use('/cars', new CarController().router);
 server.use('/tags', new TagController().router);
 server.use('/categories', new CategoryController().router);
 server.use('/users', new UserController().router);
+server.use('/orders', new OrderController().router);
 
 // connect to db
 DBContext.connect();

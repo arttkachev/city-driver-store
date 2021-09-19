@@ -13,7 +13,8 @@ export default class UserController {
 		this.router = express.Router()
 			.get('', this.getUsers)
 			.get('/:id/user', this.getUserById)
-			.post('', this.addUser)
+			.get('/get/count', this.getUserCount)
+			.post('/register', this.registerUser)
 			.post('/login', this.login)
 			.put('/:id', this.editUser)
 			.delete('/:id', this.deleteUser)
@@ -39,7 +40,7 @@ export default class UserController {
 		}
 	}
 
-	async addUser(req, res, next) {
+	async registerUser(req, res, next) {
 		try {
 			let newUser = await _userService.create({
 				name: req.body.name,
@@ -69,9 +70,10 @@ export default class UserController {
 				// token is used by a client to access API
 				const token = jwt.sign(
 					{
-						userId: user.id // you can pass anything
+						userId: user.id, // you can pass anything
+						isAdmin: user.isAdmin // additional secret information sticked to token
 					},
-					secret, // secret is something like a password to create a token
+					secret, // secret is something like a password to create a token. It's being used to secure server's API
 					{ expiresIn: '1d' } // optional. Token expires in 1d and the used will be logged out
 				)
 				return res.status(200).send({ user: user.email, token: token });
@@ -81,6 +83,20 @@ export default class UserController {
 			}
 		}
 		return res.status(400).send('No user with such email found');
+	}
+
+	async getUserCount(req, res, next) {
+		try {
+			let userCount = await _userService.countDocuments({});// returns a number of cars in db
+
+			if (!userCount) {
+				res.status(500).json({ success: false })
+			}
+			res.send({ Count: userCount });
+		}
+		catch (error) {
+			next(error);
+		}
 	}
 
 

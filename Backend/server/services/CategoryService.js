@@ -1,7 +1,7 @@
 // service provides functionality to "talk" to a database through repository and a model itself
 
 import mongoose from 'mongoose'
-const categorySchema = require('../models/CategoryModel'); // import car schema
+const categorySchema = require('../models/Category');
 
 // create an instance of the model
 const _model = categorySchema;
