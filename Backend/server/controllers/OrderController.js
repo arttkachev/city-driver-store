@@ -1,8 +1,9 @@
 // controller handles requests/responds
 
 import express from 'express';
-import OrderService from '../services/OrderService';
 import OrderItemService from '../services/OrderItemService'
+import OrderService from '../services/OrderService';
+
 
 // expose our model and functionality
 const _orderService = new OrderService().repository;
@@ -20,7 +21,10 @@ export default class OrderController {
 
 	async getAllOrders(req, res, next) {
 		try {
-			let order = await _orderService.find({});
+			// .populate('user', 'name'); shows only name of the user
+			// .sort('dateOfOrder'); sorts results by dateOfOrders from oldest to newest
+			// .sort({ 'dataOfOrder': -1}); sorts results by dateOfOrder from newest to oldest
+			let order = await _orderService.find({}).populate('user', 'name').sort({ 'dateOfOrder': -1 });
 			return res.send(order);
 		}
 		catch (error) {
@@ -30,7 +34,13 @@ export default class OrderController {
 
 	async getOrderById(req, res, next) {
 		try {
-			let orderById = await _orderService.findById(req.params.id);
+			let orderById = await _orderService.findById(req.params.id)
+				.populate('user', 'name')
+				.populate({ // this is a way how to populate subcategories
+					path: 'orderItems', populate: {
+						path: 'item', populate: 'category'
+					}
+				});
 			return res.send(orderById);
 		}
 		catch (error) {
