@@ -69,6 +69,20 @@ export default class OrderController {
 			// in other words, wait once async callback function from above finished its work for extracting orders items data from frontend POST request
 			const orderItemsIdsResolved = await orderItemdsIds;
 
+			// calculate total prices of each order item
+			const totalPrices = await Promise.all(orderItemsIdsResolved.map(async orderItemId => {
+				// find orderItem in db 
+				const orderItem = await _orderItemService.findById(orderItemId).populate('item', 'price');
+				// calculate its total price
+				const totalPrice = orderItem.item.price * orderItem.quantity;
+				return totalPrice;
+			}));
+
+			// calculate total price for the order
+			const totalOrderPrice = totalPrices.reduce((a, b) => a + b, 0);
+
+
+
 			let newOrder = await _orderService.create({
 				orderItems: orderItemsIdsResolved,
 				shippingAddress1: req.body.shippingAddress1,
@@ -80,7 +94,7 @@ export default class OrderController {
 				status: req.body.status,
 				user: req.body.user,
 				dateOfOrder: req.body.dateOfOrder,
-				totalPrice: req.body.totalPrice
+				totalPrice: totalOrderPrice,
 			}); // mongo create method and we passing in a request body as a param. As mentioned above we have an access to all functionality of the db thorugh the service (see implementation)
 			return res.send(newOrder);
 		}
