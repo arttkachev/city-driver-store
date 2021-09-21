@@ -50,6 +50,7 @@ export default class OrderController {
 
 	async addOrder(req, res, next) {
 		try {
+			let totalPrices = [];
 			// we want to automatically extract ids of order items in db for frontend POST request
 			// first, loop through order items in user request to extract data they contain. req.body.orderItems is array (see declaration)
 			const orderItemdsIds = Promise.all(req.body.orderItems.map(async orderItem => { // Promise.all() because function returns an array of promises due to async work and by Promise.all() we combine them together
@@ -61,6 +62,13 @@ export default class OrderController {
 				// and then, save new order items in db
 				//newOrderItem = await newOrderItem.save();
 
+				// calculate total price of each order item
+				// first, find new just created order item by id to figure out its price for single item
+				const orderItemTotalPrice = await _orderItemService.findById(newOrderItem._id).populate('item', 'price');
+				// and calculate total
+				totalPrices.push(orderItemTotalPrice.item.price * newOrderItem.quantity);
+
+
 				// we want to return ids of order items only to use them on POST request below
 				return newOrderItem._id;
 			}));
@@ -69,19 +77,8 @@ export default class OrderController {
 			// in other words, wait once async callback function from above finished its work for extracting orders items data from frontend POST request
 			const orderItemsIdsResolved = await orderItemdsIds;
 
-			// calculate total prices of each order item
-			const totalPrices = await Promise.all(orderItemsIdsResolved.map(async orderItemId => {
-				// find orderItem in db 
-				const orderItem = await _orderItemService.findById(orderItemId).populate('item', 'price');
-				// calculate its total price
-				const totalPrice = orderItem.item.price * orderItem.quantity;
-				return totalPrice;
-			}));
-
 			// calculate total price for the order
 			const totalOrderPrice = totalPrices.reduce((a, b) => a + b, 0);
-
-
 
 			let newOrder = await _orderService.create({
 				orderItems: orderItemsIdsResolved,
