@@ -14,6 +14,9 @@ export default class OrderController {
 		this.router = express.Router()
 			.get('', this.getAllOrders)
 			.get('/:id', this.getOrderById)
+			.get('/get/userorders/:userid', this.getUserOrders)
+			.get('/get/totalsales', this.getTotalSales)
+			.get('/get/count', this.getOrdersCount)
 			.post('', this.addOrder)
 			.put('/:id', this.editOrder)
 			.delete('/:id', this.deleteOrder)
@@ -32,6 +35,29 @@ export default class OrderController {
 		}
 	}
 
+	async getUserOrders(req, res, next) {
+		try {
+			// .populate('user', 'name'); shows only name of the user
+			// .sort('dateOfOrder'); sorts results by dateOfOrders from oldest to newest
+			// .sort({ 'dataOfOrder': -1}); sorts results by dateOfOrder from newest to oldest
+			const userOrderList = await _orderService.find({ user: req.params.userid }).populate('user', 'name')
+				.populate({ // this is a way how to populate subcategories
+					path: 'orderItems', populate: {
+						path: 'item', populate: 'category'
+					}
+				}).sort({ 'dataOfOrder': -1 });
+			if (!userOrderList) {
+				return res.status(400).send('User Order List is empty');
+			}
+
+			return res.status(200).send(userOrderList);
+		}
+		catch (error) {
+			next(error);
+		}
+
+	}
+
 	async getOrderById(req, res, next) {
 		try {
 			let orderById = await _orderService.findById(req.params.id)
@@ -42,6 +68,31 @@ export default class OrderController {
 					}
 				});
 			return res.send(orderById);
+		}
+		catch (error) {
+			next(error);
+		}
+	}
+
+	// stat method
+	async getTotalSales(req, res, next) {
+		const totalSales = await _orderService.aggregate([
+			{ $group: { _id: null, totalSales: { $sum: '$totalPrice' } } } // Mongoose specification requires _id: and a field we want to return. $totalPrice is field specified in Order Schema
+		]);
+		if (!totalSales) {
+			return res.status(400).send('Cannot aggregate data');
+		}
+		res.send({ totalSales: totalSales.pop().totalSales }); // pop into array total sales
+	}
+
+	async getOrdersCount(req, res, next) {
+		try {
+			const orderCount = await _orderService.countDocuments({});// returns a number of order count in db
+
+			if (!orderCount) {
+				res.status(500).json({ success: false })
+			}
+			res.send({ Count: orderCount });
 		}
 		catch (error) {
 			next(error);
