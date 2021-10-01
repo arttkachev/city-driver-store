@@ -10,7 +10,8 @@ function authJwt() {
 		path: [
 			'/users/login', // just paths
 			'/users/register',
-			{ url: /\/cars(.*)/, methods: ['GET', 'OPTIONS'] } // regular expression to specify cars/.. API accessible with GET method without token required]
+			{ url: /\/cars(.*)/, methods: ['GET', 'OPTIONS'] }, // regular expression to specify cars/.. API accessible with GET method with no token required]
+			{ url: /\/public\/uploads(.*)/, methods: ['GET', 'OPTIONS'] } // make uploads accessible with no token required
 		]
 	})
 }

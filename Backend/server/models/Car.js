@@ -26,6 +26,9 @@ const carSchema = new Schema({
 		type: String,
 		default: ''
 	},
+	gallery: [{
+		type: String
+	}],
 	year: {
 		type: String
 	},

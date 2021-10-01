@@ -10,7 +10,7 @@ const cors = require('cors');
 const authJwt = require('./helpers/jwt');
 const errorHandler = require('./helpers/ErrorHandler');
 
-
+const urlUploadPath = process.env.URL_UPLOAD_PATH;
 
 // create server
 let server = express();
@@ -24,6 +24,7 @@ server.options('*', cors()); // args (asteriks means cors is enabled for the ent
 server.use(express.urlencoded({ extended: true }));
 server.use(express.json());
 server.use(authJwt()); // middleware used to secure server's API. Request is only valid if a user authorized
+server.use(`${urlUploadPath}`, express.static(__dirname + `${urlUploadPath}`)); // makes uploads as static folder
 server.use(errorHandler);
 
 // routers
