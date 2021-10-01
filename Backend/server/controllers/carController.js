@@ -10,11 +10,11 @@ require('dotenv/config');
 let _carService = new CarService().repository;
 
 // uploads
-// Specify extensions we want to be validated on server. This is mimetype format
+// Specify extensions we want to be validated on server. This is mimetype format (mimetype map)
 const FILE_TYPE_MAP = {
-	'icon/png': 'png', // icon name is what frontend sends
-	'icon/jpeg': 'jpeg',
-	'icon/jpg': 'jpg',
+	'image/png': 'png', // image name is what frontend sends
+	'image/jpeg': 'jpeg',
+	'image/jpg': 'jpg',
 
 }
 const uploadPath = process.env.UPLOAD_PATH;
@@ -22,17 +22,18 @@ const urlUploadPath = process.env.URL_UPLOAD_PATH;
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) { // function to check a destination path and validity of extension
 		const isValidExtension = FILE_TYPE_MAP[file.mimetype]; // valid if extention (mimetype) found in map of valid extentions for uploading on server
+		console.log(isValidExtension);
 		let uploadError = new Error('invalid icon type');
 		if (isValidExtension) {
 			uploadError = null;
 		}
 
-		cb(null, `${uploadPath}`)  // callback function params (error, destination path on server machine)
+		cb(uploadError, `${uploadPath}`)  // callback function params (error, destination path on server machine)
 	},
 	filename: function (req, file, cb) { // func renames files to specific name format when user uploads files 
 		const fileName = file.originalname.split(' ').join('-'); // replaces any spaces with '-'
 		const extension = FILE_TYPE_MAP[file.mimetype]; // find valid file extension for uploading on server
-		cb(null, `${fileName}`) // adds filename, date of creation at the end of filename and extension
+		cb(null, `${fileName}-${Date.now()}.${extension}`) // adds filename, date of creation at the end of filename and extension
 	}
 });
 
