@@ -117,11 +117,11 @@ export default class CarController {
 
 	async addCar(req, res, next) {
 		try {
-			const fileName = req.file.fileName; // fileName is the name of var from the function specified in multer.diskStorage above. const fileName = file.originalname.split(' ').join('-'); it comes with user request
-			const basePath = `${req.protocol}://${req.get('host')}${urlUploadPath}`; // http://localhost:3000/public/uploads/image-2323232
 			if (!req.file) {
 				return res.status(400).send('No image for upload');
 			}
+			const fileName = req.file.filename; // filename is set by a function specified in the multer.diskStorage above. const fileName = file.originalname.split(' ').join('-'); it comes with user request			
+			const basePath = `${req.protocol}://${req.get('host')}${urlUploadPath}`; // http://localhost:3000/public/uploads/image-2323232			
 			let newCar = await _carService.create({
 				name: req.body.name,
 				category: req.body.category,
