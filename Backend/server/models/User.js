@@ -15,7 +15,7 @@ const userSchema = new Schema({
 
 });
 
-// create virtual "id" field (more frontend friendly)
+// create a virtual "id" field (more frontend friendly)
 userSchema.virtual('id').get(function () {
 	return this._id.toHexString();
 })

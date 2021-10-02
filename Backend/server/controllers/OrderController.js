@@ -24,7 +24,7 @@ export default class OrderController {
 
 	async getAllOrders(req, res, next) {
 		try {
-			// .populate('user', 'name'); shows only name of the user
+			// .populate('user', 'name'); shows only a name of the user
 			// .sort('dateOfOrder'); sorts results by dateOfOrders from oldest to newest
 			// .sort({ 'dataOfOrder': -1}); sorts results by dateOfOrder from newest to oldest
 			let order = await _orderService.find({}).populate('user', 'name').sort({ 'dateOfOrder': -1 });
@@ -37,7 +37,7 @@ export default class OrderController {
 
 	async getUserOrders(req, res, next) {
 		try {
-			// .populate('user', 'name'); shows only name of the user
+			// .populate('user', 'name'); shows only a name of the user
 			// .sort('dateOfOrder'); sorts results by dateOfOrders from oldest to newest
 			// .sort({ 'dataOfOrder': -1}); sorts results by dateOfOrder from newest to oldest
 			const userOrderList = await _orderService.find({ user: req.params.userid }).populate('user', 'name')
@@ -113,22 +113,22 @@ export default class OrderController {
 				// and then, save new order items in db
 				//newOrderItem = await newOrderItem.save();
 
-				// calculate total price of each order item
-				// first, find new just created order item by id to figure out its price for single item
+				// calculate a total price of each order item
+				// first, find a new just created order item by id to figure out its price for single item
 				const orderItemTotalPrice = await _orderItemService.findById(newOrderItem._id).populate('item', 'price');
 				// and calculate total
 				totalPrices.push(orderItemTotalPrice.item.price * newOrderItem.quantity);
 
 
-				// we want to return ids of order items only to use them on POST request below
+				// we want to return ids of order items only to use them on the POST request below
 				return newOrderItem._id;
 			}));
 
-			// before creating new order we need to resolve promises (wait once async functions finished their work - see above) because we need item orders, not promises
-			// in other words, wait once async callback function from above finished its work for extracting orders items data from frontend POST request
+			// before creating a new order we need to resolve promises (wait once async functions finished their work - see above) because we need item orders, not promises
+			// in other words, wait once an async callback function from above finished its work for extracting orders items data from the frontend POST request
 			const orderItemsIdsResolved = await orderItemdsIds;
 
-			// calculate total price for the order
+			// calculate a total price for the order
 			const totalOrderPrice = totalPrices.reduce((a, b) => a + b, 0);
 
 			let newOrder = await _orderService.create({

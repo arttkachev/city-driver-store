@@ -20,9 +20,9 @@ const FILE_TYPE_MAP = {
 const uploadPath = process.env.UPLOAD_PATH;
 const urlUploadPath = process.env.URL_UPLOAD_PATH;
 const storage = multer.diskStorage({
-	destination: function (req, file, cb) { // function to check a destination path and validity of extension
-		const isValidExtension = FILE_TYPE_MAP[file.mimetype]; // valid if extention (mimetype) found in map of valid extentions for uploading on server
-		console.log(isValidExtension);
+	destination: function (req, file, cb) { // function to set a destination field. Just console.log(req.files) 
+		//inside a .put('/gallery/:id', uploadOptions.array('gallery', 10), this.editGalleryById) request and it will be clear how it works
+		const isValidExtension = FILE_TYPE_MAP[file.mimetype]; // valid if an extention (mimetype) found in map of valid extentions for uploading on a server		
 		let uploadError = new Error('invalid icon type');
 		if (isValidExtension) {
 			uploadError = null;
@@ -30,10 +30,10 @@ const storage = multer.diskStorage({
 
 		cb(uploadError, `${uploadPath}`)  // callback function params (error, destination path on server machine)
 	},
-	filename: function (req, file, cb) { // func renames files to specific name format when user uploads files 
+	filename: function (req, file, cb) { // func sets a filename field. It renames files to a specific name format when uploading files
 		const fileName = file.originalname.split(' ').join('-'); // replaces any spaces with '-'
-		const extension = FILE_TYPE_MAP[file.mimetype]; // find valid file extension for uploading on server
-		cb(null, `${fileName}-${Date.now()}.${extension}`) // adds filename, date of creation at the end of filename and extension
+		const extension = FILE_TYPE_MAP[file.mimetype]; // find a valid file extension for uploading on a server
+		cb(null, `${fileName}-${Date.now()}.${extension}`) // adds a filename, date of creation at the end of the filename and extension
 	}
 });
 
@@ -60,7 +60,7 @@ export default class CarController {
 			if (req.query.categories) {
 				filter = { category: req.query.categories.split(',') } // filter to show cars by specified categories
 			}
-			let car = await _carService.find(filter) // use query filter in request
+			let car = await _carService.find(filter) // use a query filter in a request
 				.populate('tags')
 				.populate('category')
 			return res.send(car);
@@ -127,12 +127,13 @@ export default class CarController {
 				category: req.body.category,
 				description: req.body.description,
 				capacity: req.body.capacity,
-				icon: `${basePath}${fileName}`, // icon comes from user request. URL is formed from base path on server for images and name of the file that user uploads
+				icon: `${basePath}${fileName}`, // icon comes from a user request. URL is formed from a base path on a server for images and a name of the file that a user uploads
+				gallery: req.body.gallery,
 				year: req.body.year,
 				color: req.body.color,
 				price: req.body.price,
 				tags: req.body.tags,
-			}); // mongo create method and we passing in a request body as a param. As mentioned above we have an access to all functionality of the db thorugh the service (see implementation) 
+			}); // mongo create method and we're passing in a request body as a param. As mentioned above we have an access to all functionality of the db thorugh the service (see implementation) 
 			return res.send(newCar);
 		}
 		catch (error) {
@@ -161,6 +162,9 @@ export default class CarController {
 						},
 						icon: {
 							$cond: { if: req.body.icon != null, then: req.body.icon, else: '$icon' }
+						},
+						gallery: {
+							$cond: [{ $in: [{ $first: [{ $ifNull: [req.body.gallery, []] }] }, '$gallery'] }, { $setDifference: ['$gallery', req.body.gallery] }, { $concatArrays: ['$gallery', { $ifNull: [req.body.gallery, []] }] }]
 						},
 						year: {
 							$cond: { if: req.body.year != null, then: req.body.year, else: '$year' }
@@ -191,7 +195,7 @@ export default class CarController {
 			let imagePaths = [];
 			if (files) {
 				files.map(file => {
-					imagePaths.push(`${basePath}${file.fileName}`);
+					imagePaths.push(`${basePath}${file.filename}`);
 				})
 
 			}

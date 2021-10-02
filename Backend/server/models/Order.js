@@ -46,7 +46,7 @@ const orderSchema = mongoose.Schema({
 	},
 })
 
-// create virtual "id" field (more frontend friendly)
+// create a virtual "id" field (more frontend friendly)
 orderSchema.virtual('id').get(function () {
 	return this._id.toHexString();
 })

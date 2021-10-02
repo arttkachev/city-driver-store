@@ -42,7 +42,7 @@ const carSchema = new Schema({
 	tags: [String]
 });
 
-// create virtual "id" field (more fronend friendly)
+// create a virtual "id" field (more fronend friendly)
 carSchema.virtual('id').get(function () {
 	return this._id.toHexString();
 })

@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 
-// grab dotnev library to read from .env
+// grab a dotnev library to read from .env
 require('dotenv/config');
 const connectionString = process.env.CONNECTION_STRING;
 
 export default class DBContext {
 
-	// static promise method to connect to db
+	// a static promise method to connect to db
 	static async connect() {
 		try {
 			let status = await mongoose.connect(connectionString);

@@ -64,14 +64,14 @@ export default class UserController {
 		});
 
 		if (user) {
-			// if password correct, create token for the user with jwt lib
+			// if password correct, create a token for the user with the jwt lib
 			if (bcrypt.compareSync(req.body.password, user.password)) {
 				const secret = process.env.SECRET;
-				// token is used by a client to access API
+				// a token is used by a client to access the API
 				const token = jwt.sign(
 					{
 						userId: user.id, // you can pass anything
-						isAdmin: user.isAdmin // additional secret information sticked to token
+						isAdmin: user.isAdmin // additional secret information sticked to a token
 					},
 					secret, // secret is something like a password to create a token. It's being used to secure server's API
 					{ expiresIn: '1d' } // optional. Token expires in 1d and the used will be logged out

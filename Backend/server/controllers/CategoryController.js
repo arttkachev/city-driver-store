@@ -38,7 +38,7 @@ export default class CategoryController {
 
 	async addCategory(req, res, next) {
 		try {
-			let newCategory = await _categoryService.create(req.body); // mongo create method and we passing in a request body as a param. As mentioned above we have an access to all functionality of the db thorugh the service (see implementation) 
+			let newCategory = await _categoryService.create(req.body); // mongo create method and we're passing in a request body as a param. As mentioned above we have an access to all functionality of the db thorugh the service (see implementation) 
 			return res.send(newCategory);
 		}
 		catch (error) {

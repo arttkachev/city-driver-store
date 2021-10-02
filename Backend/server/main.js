@@ -4,15 +4,15 @@ import UserController from './controllers/UserController';
 import CategoryController from './controllers/CategoryController';
 import OrderController from './controllers/OrderController';
 import DBContext from "./db/DBconfig";
-const express = require("express"); // grab express library. require('express') is something like import library
-require('dotenv/config'); // grab library that allows to read public vars from .env file
+const express = require("express"); // grab an express library. require('express') is something like import a library
+require('dotenv/config'); // grab a library that allows to read public vars from an .env file
 const cors = require('cors');
 const authJwt = require('./helpers/jwt');
 const errorHandler = require('./helpers/ErrorHandler');
 
 const urlUploadPath = process.env.URL_UPLOAD_PATH;
 
-// create server
+// create a server
 let server = express();
 const port = 3000;
 
@@ -23,8 +23,8 @@ server.options('*', cors()); // args (asteriks means cors is enabled for the ent
 // middleware
 server.use(express.urlencoded({ extended: true }));
 server.use(express.json());
-server.use(authJwt()); // middleware used to secure server's API. Request is only valid if a user authorized
-server.use(`${urlUploadPath}`, express.static(__dirname + `${urlUploadPath}`)); // makes uploads as static folder
+server.use(authJwt()); // middleware used to secure a server's API. A request is only valid if a user authorized
+server.use(urlUploadPath, express.static(__dirname + urlUploadPath)); // makes uploads as static folder. It allows to open up images in the browser
 server.use(errorHandler);
 
 // routers
@@ -37,12 +37,12 @@ server.use('/orders', new OrderController().router);
 // connect to db
 DBContext.connect();
 
-// check request
+// check a request
 server.get('/', (req, res, next) => {
 	res.send('City Driver Backend');
 })
 
-// start listening requests by server
+// start listening requests by a server
 server.listen(port, () => {
 	console.log("Server is listening to a port:", port);
 })
